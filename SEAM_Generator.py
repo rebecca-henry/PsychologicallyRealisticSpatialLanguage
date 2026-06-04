@@ -13,8 +13,8 @@ batch_iter = f"iter01"
 # captions file name (to be read), prompt file name (to be saved to), seams file name (to be saved to)
 input_captions = open(f"captions/SEAM_DB/{batch_name}_captions.txt").readlines()
 input_captions_fname = f"captions/SEAM_DB/{batch_name}_captions.txt"
-prompt_fname = f"prompts/SEAM_DB/V3/{batch_name}_{batch_iter}_prompts.jsonl"
-SEAMs_fname = f"SEAMs/SEAM_DB/V3/{batch_name}_{batch_iter}_SEAMS.jsonl"
+prompt_fname = f"prompts/SEAM_DB/{batch_name}_{batch_iter}_prompts.jsonl"
+SEAMs_fname = f"SEAMs/SEAM_DB/{batch_name}_{batch_iter}_SEAMS.jsonl"
 
 # shouldn't need to change ever
 # historic log stores every single log, master only stores most recent update of each batch
@@ -211,7 +211,7 @@ def save_batch(batch_id):
     original_batch_name = original_record["metadata"]["batch_name"] if original_record else batch_name
     original_batch_size = original_record["metadata"]["batch_size"] if original_record else batch_size
     original_size_mb = original_record["metadata"]["size_mb"] if original_record else None
-    seams_path = f"SEAMs/SEAM_DB/V3/{original_filename}_SEAMS.jsonl"
+    seams_path = f"SEAMs/SEAM_DB/{original_filename}_SEAMS.jsonl"
 
     # if completed, retrieve the result
     if batch.status == "completed":
