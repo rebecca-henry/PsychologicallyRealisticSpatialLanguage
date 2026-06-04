@@ -1,0 +1,134 @@
+Generate a SEAM following these rules. Output only valid JSON matching the schema. You will validate your output against a checklist before responding.
+------------------------------------------------------------
+TEXT OUTPUT RULE
+
+Keep all string fields clear and concise.
+Naming: Name the element being described. If needed, other elements can be included in the name, but prepositional language should not be in the name. ("Park bench" is allowed, but "bench in park" is not allowed. "TV stand" is allowed, but "Stand under the TV" is not allowed.)
+When doing spatial referencing: do not include any elements that are not mentioned in the spatial reference structure or elsewhere in scene
+Only include descriptive details (colours, patterns, etc.) if they are necessary to identify an element spatially
+------------------------------------------------------------
+SIZE, DISTANCE, AND DIRECTION VAUES
+
+Height describes how tall an element is (how vertically long it is). 
+Width describes how far an element stretches across horizontally. 
+Depth describes the thickness of an element, how far it extends backward. 
+All sizes, distances, and angles are perceived estimates that reflect how a human naturally remembers a scene, not precise measurements
+Sizes must be plausible with consistent relative scale. 
+------------------------------------------------------------
+UNIT RULE
+
+For height_unit, width_unit, depth_unit, or distance_unit the allowed units are: mm, cm, m, km. 
+Normalize (e.g., 10000 m -> 10 km, 0.05 m -> 5 cm). 
+Prefer whole numbers, but decimals values are acceptable. 
+All direction_unit are degrees.
+Consider the unit that a person would most likely choose. For example, a person would likely say 60 cm instead of 0.6m, and 2m instead of 200cm.
+------------------------------------------------------------
+ORIENTATION_DESC AND ORIENTATION_VALUE
+
+orientation_desc = natural language description of the elements' orientation in comparison to the viewer. 
+Identify the front face of the element and then describe which way it is facing relative to the viewer. For example, the wall behind the viewer is facing the same way that the viewer is facing. The front wall is facing the opposite way that the viewer is facing.
+Note: for flat surfaces, the face is the side facing inward toward the scene.
+orientation_value = difference in horizontal direction of element's forward-facing direction relative to viewer's forward. 0°=same as viewer, 90°= facing right, 180°= facing backward, 270°= facing left.
+------------------------------------------------------------
+GEOMETRY
+
+The geometry defines the environment. It contains all other aspects of the scene, thus its size must reflect this.
+It is described by a 3D shape, such as "rectangular prism" or "dome".
+Its core properties are: type, shape, and size. Type describes the scene - for example: indoor, outdoor, restricted, unrestricted, beach, kitchen, forest, bedroom
+The geometry should align with the perimeter of the outermost boundaries.
+Depth is along the front/behind dimension. Width is along the left/right dimension. And height is along the above/below dimension.
+Left and right span the depth of the geometry. Above and below span both width and depth. In front and behind span width.
+Geometry defines the environment containing the scene and should not be used as a reference_element. Geometry may only be referenced when describing global alignment (e.g., "center of the room") and should not be used to define boundaries that form the geometry.
+------------------------------------------------------------
+LOCATION_DESC AND REFERENCE_ELEMENTS LIST
+
+- Reference_elements list contains the official names of the elements used to describe the target_elements location
+- location list is a list of spatial references defining each reference element with respect to the target element
+- Location_desc describes the relation betweent the target element and all of the reference elements mentioned in the reference_elements list and the location list (spatial references)
+- location_desc describes the viewer's position relative to the reference_elements using prepositional language (e.g., "just inside the entrance, facing the far front wall"). 
+- location_desc must only mention elements listed in reference_elements list, and it must mention them all.
+- reference_elements can be the viewer, a boundary, a segment, or an object. 
+- Reference elements should be reasonable, reflecting what a person would likely choose. 
+- Reference_elements list should typically be limited to 1-2 elements unless more are necessary to accurately and realistically describe the spatial relationship
+- Use official element names in the location_desc, reference_elements list, and location (spatial references). No paraphrases or synonyms.
+- location_desc, reference_elements, and location (spatial references) must be fully consistent with each other, containing exactly the same elements
+- Do not include numerical distance, direction, orientation, or size values in the location_desc. These must be expressed effectively without numbers. Use words like near, far, close by, beside, against, on top of, above, etc.
+- "viewer" is a valid reference_element for boundaries, objects, segments, but it is not a valid reference_element for the reference frame. Use it when the relation is naturally egocentric. 
+- If an element is not in reference_elements list then DO NOT mention in location_desc. If you NEED to mention it in location_desc, then add it to reference_elements list and to location (spatial geometry)
+- When creating location_desc consider the location of the objects and their orientation with respect to the viewer. Ensure the location_desc is coherent with this information.
+-------------------------------------------------------------
+REFERENCE FRAME RULES
+
+- The reference frame defines where the viewer is and which way the viewer is facing with respect to the geometry of the space
+- For the reference frame, the viewer is always the target_element and cannot be a reference_element
+- For the reference frame include: its geometry_alignment_desc, location_desc, reference_elements, and location (list of spatial references)
+- Viewer is at (0,0,0), facing 0° (forward). 0°=front, 90°=right, 180°=behind, 270°=left.
+- geometry_alignment_desc describes how the reference frame axes align with the spatial geometry. For example, "In center of rectangular prism, facing short side, with long sides to the left and right"
+- geometry_alignment_desc DOES NOT inform the reference_elements. ONLY location_desc informs the reference_elements. Keep these separate, but still maintain spatial logic.
+- The viewer is the target_element for the reference frame element. Do not make the viewer one of the reference frames' reference elements.
+- First determine the reference_elements list, then represent as location (spatial references), finally write the location_desc
+------------------------------------------------------------
+SPATIAL REFERENCE AND CATEGORY DESCRIPTION RULES
+
+Each element has a list of spatial references (typically 1-2) and a location_desc summarizing the element's position relative to all its reference points combined.
+- an element would need more than 1 spatial reference if it uses them all to be located. For example, a coffee table described as "between two chairs" would need two spatial references - one for each chair. 
+- First determine the reference_elements list, then represent as location (spatial references), finally write the location_desc
+
+The location list consists of spatial references. They describe the relationship between the target element and one reference_element:
+- create a spatial reference for every reference element in the reference_elements list
+- target_element: the element being described
+- reference_element: the element being used to anchor the target element.
+- relation_desc: brief and clear prepositional spatial relation between the two elements (e.g., "above and to the left", "directly in front of"). Should reflect the location_desc.
+- reference_centre_point and target_centre_point: clear anchor points on each element to describe where its "centre" is. (e.g., "where the branches meet the trunk" or "the center of the window"). This is the point used for referencing. 
+- horizontal_direction_value and vertical_direction_value must be consistent with reference_centre_point -> target_centre_point. If target anchor is higher: vertical > 0. If lower: vertical < 0. If similar height: near 0. If directly above: 90. If directly below: -90. Small differences should be around 10 degrees.
+- Estimate the shortest, direct, straight line path from reference point to target point and report as distance_value 
+- When an object is resting on a surface, the vertical distance between the support surface and object bottom should be approximately zero and the centre_points should be touching.
+------------------------------------------------------------
+NON-REDUNDANCY
+
+Do not define the same element more than once across element types. If a structure is a Boundary, do not recreate it as a Segment or Object unless it is a distinct localized subregion.
+------------------------------------------------------------
+BOUNDARIES
+
+A boundary is an extended 3D surface that has a height of at least 2 cm. A tree is typically not considered a boundary, but a row of trees is a boundary. More examples include a wall, a ledge, a curb, a row of pylons, etc.
+All boundaries and surroundings together must ensure that no direction from the viewer is unbounded. 
+Do not split a single continuous boundary into multiple boundaries. Only create separate boundaries if they are genuinely distinct elements. An example of boundaries that should not be split: a ring of pylons, a curved row of trees, a bay of water. Example of boundaries that should be split: the 4 surrounding walls of a room (left, right, in front, and behind)
+For each boundary include: its name, size, orientation_value, orientation_unit (always degrees), orientation_desc, location (list of spatial references), location_desc, landmark flag, and surrounding_type. Set landmark=True only if the boundary anchors the viewer's reference frame.
+surrounding_type indicates whether the boundary encloses space from above ("above"), below ("below"), or neither ("none"). Walls and vertical surfaces use "none". Ceilings and overhead surfaces use "above". Floor surfaces use "below". Their thickness should be small (1-5cm)
+First determine the reference_elements list, then represent as location (spatial references), finally write the location_desc
+------------------------------------------------------------
+SEGMENTS
+
+A segment is a spatially significant subsection of the scene. Examples of segments: In a park -> soccer field, picnic area, dog park, garden, walking path, playground. In a garden -> rocky border, rose bush, tree, tomato patch. A dinner table: upper left quadrant, upper right quadrant, lower left quadrant, lower right quadrant, center of table
+For each segment include: its name, shape, size, location (list of spatial references), location_desc, landmark flag, orientation_value, orientation_unit (always degrees), orientation_desc. Segments have no surrounding_type. Set landmark=True only if the segment anchors the viewer's reference frame.
+First determine the reference_elements list, then represent as location (spatial references), finally write the location_desc
+------------------------------------------------------------
+OBJECT ITEMS (optional)
+
+ObjectItems are physical items present in the scene. Do not create partial object fragments unless the fragment itself is the meaningful element.
+Not all scenes have objects, so they are not mandatory. 
+An object may be the focus of the scene, but space is still constructed around it.
+For each object provide: its name, size (perceived height, width, depth), orientation_value, orientation_unit (always degrees), orientation_desc, location (list of spatial references), location_desc, and landmark flag. Set landmark=True only if the object anchors the viewer's reference frame.
+First determine the reference_elements list, then represent as location (spatial references), finally write the location_desc
+------------------------------------------------------------
+SURROUNDINGS (optional)
+
+A surrounding is a vast, enveloping feature above or below the scene. No spatial references needed -- position is captured by surrounding_type ("above" or "below"). geometric_desc gives its shape and form (e.g., "open dome", "vast flat plane", "canopy"). 
+Examples include: sky, ocean, sand, plain, field, lake, outer space
+Works together with boundaries to ensure that no direction from the viewer is unbounded. 
+If it already exists as a boundary do not repeat it as a surrounding. Boundaries get priority. (Ex. the ceiling is a boundary so it doesn't need to be represented as a surrounding in addition)
+------------------------------------------------------------
+SCENE NAME
+
+name is a short label created by the model to reflect the scene as constructed (e.g., "Dog playing at the beach").
+------------------------------------------------------------
+VALIDATION (MANDATORY BEFORE OUTPUT)
+1. The boundaries and surroundings work together to create environmental limits for every direction (front, behind, left, right, above, below). If not, add or adjust boundaries and surroundings as needed.
+2. Ensure outermost boundaries approximately match geometry dimensions. For example , the front wall to back wall distance should = geometry depth. The left to right wall should = geometry width. The floor to ceiling should = geometry height.
+3. Make all elements fit inside the geometry. Check for cohesion amongst the sizes and locations of the elements. If not, adjust the elements accordingly.
+4. Ensure the internal spatial structure is logical, consistent, and believable. Adjust as needed.
+5. Check that the reference_elements are appropriate and what a person would likely choose. If not, change as needed.
+6. Every reference_element is an existing element. If not, either remove the offending reference_element, or create a new one.
+7. Every location_desc mentions all the elements in its reference_elements list and ONLY mentions the elements in the reference_elements list.
+8. All category centres are described in a way that conveys which point of the component they are located on. If not, adjust their description.
+9. Units must be normalized and magnitudes must be perceptually plausible, reflecting values a human would naturally assume. If not, adjust accordingly.
