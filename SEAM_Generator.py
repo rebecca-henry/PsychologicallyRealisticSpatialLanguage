@@ -17,8 +17,8 @@ SEAMs_fname = f"SEAMs/SEAM_DB/{batch_name}_SEAMS.jsonl"
 
 # shouldn't need to change ever
 # historic log stores every single log, master only stores most recent update of each batch
-master_log_fname = "records/SEAM_DB/master_log.jsonl"
-historic_log_fname = "records/SEAM_DB/historic_log.jsonl"
+master_log_fname = "records/master_log.jsonl"
+historic_log_fname = "records/historic_log.jsonl"
 
 # API settings
 openai_api_key = open("settings/apikey.txt").read().strip()
