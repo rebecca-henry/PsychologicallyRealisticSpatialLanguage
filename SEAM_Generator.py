@@ -8,13 +8,12 @@ import os
 # settings
 # naming method -- adjust for new batch 
 batch_name = "batch_0_1"
-batch_iter = f"iter01"
 
 # captions file name (to be read), prompt file name (to be saved to), seams file name (to be saved to)
 input_captions = open(f"captions/SEAM_DB/{batch_name}_captions.txt").readlines()
 input_captions_fname = f"captions/SEAM_DB/{batch_name}_captions.txt"
-prompt_fname = f"prompts/SEAM_DB/{batch_name}_{batch_iter}_prompts.jsonl"
-SEAMs_fname = f"SEAMs/SEAM_DB/{batch_name}_{batch_iter}_SEAMS.jsonl"
+prompt_fname = f"prompts/SEAM_DB/{batch_name}_prompts.jsonl"
+SEAMs_fname = f"SEAMs/SEAM_DB/{batch_name}_SEAMS.jsonl"
 
 # shouldn't need to change ever
 # historic log stores every single log, master only stores most recent update of each batch
@@ -171,9 +170,9 @@ def create_batch(file_size_mb):
 
     # log the batch creation in master_toc and historic_toc
     with open(master_log_fname, "a") as f:
-        f.write(json.dumps({"batch_id": batch.id, "metadata": {"status": "Generating", "batch_name": batch_name, "caption_file": input_captions_fname, "prompt_file": prompt_fname, "filename": f"{batch_name}_{batch_iter}", "file_id" : None, "batch_size": batch_size, "size_mb": str(file_size_mb) + "MB","date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}}) + "\n")
+        f.write(json.dumps({"batch_id": batch.id, "metadata": {"status": "Generating", "batch_name": batch_name, "caption_file": input_captions_fname, "prompt_file": prompt_fname, "filename": f"{batch_name}", "file_id" : None, "batch_size": batch_size, "size_mb": str(file_size_mb) + "MB","date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}}) + "\n")
     with open(historic_log_fname, "a") as f:
-        f.write(json.dumps({"batch_id": batch.id, "metadata": {"status": "Generating", "batch_name": batch_name, "caption_file": input_captions_fname, "prompt_file": prompt_fname, "filename": f"{batch_name}_{batch_iter}","file_id" : None,  "batch_size": batch_size, "size_mb": str(file_size_mb) + "MB", "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}}) + "\n")
+        f.write(json.dumps({"batch_id": batch.id, "metadata": {"status": "Generating", "batch_name": batch_name, "caption_file": input_captions_fname, "prompt_file": prompt_fname, "filename": f"{batch_name}","file_id" : None,  "batch_size": batch_size, "size_mb": str(file_size_mb) + "MB", "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}}) + "\n")
 
 # retrieve and print error content
 def retrieve_error(file_id):
@@ -205,7 +204,7 @@ def save_batch(batch_id):
         (l for l in data if l["batch_id"] == batch_id and l["metadata"]["status"] == "Generating"),
         None
     )
-    original_filename = original_record["metadata"]["filename"] if original_record else f"{batch_name}_{batch_iter}"
+    original_filename = original_record["metadata"]["filename"] if original_record else f"{batch_name}"
     original_caption_file = original_record["metadata"]["caption_file"] if original_record else input_captions_fname
     original_prompt_file = original_record["metadata"]["prompt_file"] if original_record else prompt_fname
     original_batch_name = original_record["metadata"]["batch_name"] if original_record else batch_name
