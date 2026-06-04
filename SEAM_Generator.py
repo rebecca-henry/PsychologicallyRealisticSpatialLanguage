@@ -6,10 +6,9 @@ from typing import Literal
 import os
 
 # settings
-# adjust for new batch 
+# naming method -- adjust for new batch 
 batch_name = "batch_0_1"
-reasoning_effort = "low" # can be "minimal", "low", "medium", or "high" - adjust in prompt if changing
-batch_iter = f"{reasoning_effort}_iter01" #"lowreasoning_5" or "minreasoning" and "minreasoning_2"
+batch_iter = f"iter01"
 
 # captions file name (to be read), prompt file name (to be saved to), seams file name (to be saved to)
 input_captions = open(f"captions/SEAM_DB/{batch_name}_captions.txt").readlines()
@@ -28,6 +27,7 @@ client = OpenAI(api_key=openai_api_key)
 language_description = open("language_description.txt").read()
 batch_size = len(input_captions)
 model = "gpt-5-nano"
+reasoning_effort = "low"  #can be "minimal", "low", "medium", or "high". 
 
 # Define pydantic classes to enforce specific output structure
 class Spatial_Reference(BaseModel):
