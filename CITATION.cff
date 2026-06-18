@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+title: "SEAM-DB: Spatial Episodic Artificial Memories Database & PRSL: Psychologically Realistic Spatial Language"
+message: "If you use this dataset or code, please cite it as below."
+authors:
+- family-names: "Henry"
+  given-names: "Rebecca"
+  affiliation: "Carleton University"
+- family-names: "Davies"
+  given-names: "Jim"
+  affiliation: "Carleton University"
+version: 1.0.0
+doi: 10.5281/zenodo.1234
+date-released: 2026-06-18
+url: "https://github.com/rebecca-henry/PsychologicallyRealisticSpatialLanguage"
